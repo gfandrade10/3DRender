@@ -8,7 +8,7 @@
 inline GeometryConfig createSphereConfig() 
 {
     // Generate sphere geometry data
-    auto sphere = GeometryUtils::GenerateSphere(1.0f, 32, 32);
+    auto sphere = GeometryUtils::GenerateSphere(1.0f, 128, 128);
 
     GeometryConfig config;
     config.vertices = sphere.vertices,
@@ -62,8 +62,8 @@ inline GeometryConfig createSphereConfig()
     )",
 
     //initial screen size
-    config.initialWidth = 1280,
-    config.initialHeight = 720,
+    config.initialWidth = 1920,
+    config.initialHeight = 1080,
 
     // Set the draw mode (GL_TRIANGLES in this case)
     config.drawMode = GL_TRIANGLES;
