@@ -121,6 +121,7 @@ void GeometryRenderer::Initialize(const GeometryConfig& config)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, config.initialWidth, config.initialHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
     // Attach texture to framebuffer as color attachment
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_RenderTexture, 0);
 
@@ -170,28 +171,30 @@ GLuint GeometryRenderer::GetRenderTexture() const
     return m_RenderTexture; 
 }
 
-void GeometryRenderer::Render() 
+void GeometryRenderer::Render()
 {
     glUseProgram(m_shader);
 
     GLint projLoc = glGetUniformLocation(m_shader, "uProjection");
     GLint viewLoc = glGetUniformLocation(m_shader, "uView");
     GLint modelLoc = glGetUniformLocation(m_shader, "uModel");
-    
+
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(m_model));
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(m_view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(m_projection));
 
-    // ADD THESE LINES HERE - Set lighting uniforms
     GLint lightDirLoc = glGetUniformLocation(m_shader, "lightDir");
     GLint lightColorLoc = glGetUniformLocation(m_shader, "lightColor");
     GLint objectColorLoc = glGetUniformLocation(m_shader, "objectColor");
 
-    // Set the values (you can customize these as needed)
     glm::vec3 lightDir = glm::normalize(glm::vec3(0.0f, -1.0f, -1.0f));
     glUniform3fv(lightDirLoc, 1, glm::value_ptr(lightDir));
     glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f); // White light
     glUniform3f(objectColorLoc, 1.0f, 1.0f, 1.0f); // White object
+
+    glm::vec3 viewPos = glm::vec3(0.0f, 0.0f, 3.0f); // Assuming your view position is (0, 0, 3)
+    GLint viewPosLoc = glGetUniformLocation(m_shader, "viewPos");
+    glUniform3fv(viewPosLoc, 1, glm::value_ptr(viewPos));
 
     // Draw
     glBindVertexArray(m_vao);

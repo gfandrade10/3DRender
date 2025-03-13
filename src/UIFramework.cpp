@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <iostream>
 #include <memory>
 #include <glad/glad.h>
@@ -104,7 +105,8 @@ void UIFramework::Run()
             std::cerr << "Uniform 'diffuseTexture' not found in shader!" << std::endl;
     }
 
-    // Main loop
+    glEnable(GL_DEPTH_TEST);
+
     while (!glfwWindowShouldClose(mWindow))
     {
         glfwPollEvents();
@@ -159,13 +161,18 @@ void UIFramework::Run()
             exit(0);
         }
 
+        if(ImGui::IsKeyPressed(ImGuiKey_Escape))
+        {
+            exit(0);
+        }
+
         ImGui::End();
         ImGui::Render();
 
         int display_w, display_h;
         glfwGetFramebufferSize(mWindow, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         

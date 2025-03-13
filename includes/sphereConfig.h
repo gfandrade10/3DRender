@@ -49,13 +49,27 @@ inline GeometryConfig createSphereConfig()
         uniform vec3 lightDir;
         uniform vec3 lightColor;
         uniform vec3 objectColor;
+        uniform vec3 viewPos; // Add view position uniform
 
         void main() {
             vec3 norm = normalize(Normal);
-            float diff = max(dot(norm, -lightDir), 0.0);
+            vec3 lightDirNorm = normalize(-lightDir);
+            vec3 viewDir = normalize(viewPos - FragPos);
+            vec3 reflectDir = reflect(-lightDirNorm, norm);
+
+            // Diffuse
+            float diff = max(dot(norm, lightDirNorm), 0.0);
             vec3 diffuse = diff * lightColor;
-            vec3 ambient = 0.5 * lightColor; // Increased from 0.2 to 0.5
-            vec3 lighting = ambient + diffuse;
+
+            // Specular
+            float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32); // Adjust the exponent for shininess
+            vec3 specular = spec * lightColor;
+
+            // Ambient
+            vec3 ambient = 0.2 * lightColor; // Reduced ambient
+
+            vec3 lighting = ambient + diffuse + specular; // Add specular
+
             vec4 texColor = texture(diffuseTexture, TexCoord);
             FragColor = texColor * vec4(objectColor * lighting, 1.0);
         }

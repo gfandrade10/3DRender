@@ -42,28 +42,32 @@ namespace GeometryUtils
 
             for(int sector = 0; sector < sectors; ++sector, ++k1, ++k2) 
             {
-                // 2 triangles per sector
-                if(stack != 0) 
+                // First triangle (k1, k2, k1+1)
+                if (stack != 0) 
                 {
                     geometry.indices.insert(geometry.indices.end(), 
                     {
                         static_cast<unsigned int>(k1),
                         static_cast<unsigned int>(k2),
-                        static_cast<unsigned int>(k1 + 1)
+                        static_cast<unsigned int>((sector == sectors - 1) ? k1 - sector : k1 + 1)
                     });
                 }
-                
-                if(stack != stacks-1) 
+
+                // Second triangle (k1+1, k2, k2+1)
+                if (stack != stacks - 1) 
                 {
+                    unsigned int nextK1 = (sector == sectors - 1) ? k1 - sector : k1 + 1;
+                    unsigned int nextK2 = (sector == sectors - 1) ? k2 - sector : k2 + 1;
+                    
                     geometry.indices.insert(geometry.indices.end(), 
                     {
-                        static_cast<unsigned int>(k1 + 1),
+                        nextK1,
                         static_cast<unsigned int>(k2),
-                        static_cast<unsigned int>(k2 + 1)
+                        nextK2
                     });
                 }
             }
-        }
+}
 
         return geometry;
     }
