@@ -28,6 +28,7 @@ UIFramework::~UIFramework()
 void UIFramework::Init(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share)
 {
     glfwInit();
+    glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
     mWindow = glfwCreateWindow(width, height, title, monitor, share);
     glfwMakeContextCurrent(mWindow);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -54,7 +55,8 @@ void UIFramework::Run()
     
     // Set transformation matrices.
     {
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+        glm::mat4 model = glm::mat4(1.0f); // No translation
+        //
         renderer->SetTransform(model);
         glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
                                      glm::vec3(0.0f, 0.0f, 0.0f),
@@ -112,7 +114,9 @@ void UIFramework::Run()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // Create an ImGui window to display the rendered scene.
+        const ImVec2 MainLoopPos = ImGui::GetIO().DisplaySize;
+        ImGui::SetNextWindowPos(ImVec2(10.0f, 10.0f));
+        ImGui::SetNextWindowSize(ImVec2(MainLoopPos.x - 20.0f, MainLoopPos.y - 20.0f));
         ImGui::Begin("3D Scene", nullptr,
             ImGuiWindowFlags_NoCollapse |       // Prevent collapsing
             ImGuiWindowFlags_NoResize |         // Prevent resizing manually
