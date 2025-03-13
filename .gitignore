@@ -1,0 +1,6 @@
+*.exe
+*.ini
+*.jpg
+*.json
+/build
+/libs
