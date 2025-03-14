@@ -3,6 +3,8 @@
 #include <memory>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "glm/ext/matrix_float4x4.hpp"
+#include "glm/ext/vector_float3.hpp"
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -137,6 +139,14 @@ void UIFramework::Run()
         float aspect = (viewportSize.y > 0.0f) ? (viewportSize.x / viewportSize.y) : 1.0f;
         
         glm::mat4 projection = glm::perspective(glm::radians(60.0f), aspect, 0.1f, 100.0f);
+
+        //object rotation
+        static float s_sphereRotAngle = 0.0f; //static, otherwise gets restarted!
+        s_sphereRotAngle += 0.002f;
+        if(s_sphereRotAngle == 360.0f) s_sphereRotAngle = 0.0f;
+
+        glm::mat4 modelCoordMatrix = glm::rotate(glm::mat4(1.0f), s_sphereRotAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+        renderer->SetTransform(modelCoordMatrix);
 
         renderer->SetProjection(projection);
         renderer->BeginRenderToTexture((int)viewportSize.x, (int)viewportSize.y);
